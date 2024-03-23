@@ -31,16 +31,20 @@ class ServerThread extends Thread {
     public Socket getSocket() {return socket;}
     public void run() {
         String s;
+	String name;
         try {
             System.out.println("Connection Received by Client " + socket.toString());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
             printWriter.println("Hello! This is a chat room. Enter BYE to exit.");
+	    printWriter.println("Enter a display name for your time in the chat room:");
+	    name = bufferedReader.readLine();
+	    System.out.println("Client " + socket.toString() + " has a display name of " + name);
 	    printWriter.println(messages);
             while (true) {
-                s = bufferedReader.readLine();
+                s = name + " said:\n" + bufferedReader.readLine() + "\n";
                 System.out.println(s);
-                if (s.equalsIgnoreCase("BYE")) break;
+                if (s.equalsIgnoreCase(name + " said:\nBYE\n")) break;
                 messages.add(s);
 		for(int i = 0; i < clients.size(); i++)
                 	new PrintWriter(clients.get(i).getSocket().getOutputStream(), true).println(s);
